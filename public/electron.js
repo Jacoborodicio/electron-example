@@ -1,6 +1,8 @@
 const electron = require("electron");
 const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
+const Menu = electron.Menu;
+const Shell = electron.shell;
 
 const path = require("path");
 const isDev = require("electron-is-dev");
@@ -21,6 +23,32 @@ function createWindow() {
   );
   mainWindow.on("closed", () => (mainWindow = null));
 }
+let menu = Menu.buildFromTemplate([
+  {
+    label: 'Menú',
+    submenu: [
+      {
+        label: 'Open github'
+      },
+      {label: 'Replace'},
+      {label: 'Find'}
+    ]
+  },
+  {
+    label: 'Info',
+    submenu: [
+      {
+        label: 'See repo on GitHub',
+        click() {
+          Shell.openExternal('https://www.github.com')
+        }
+     },
+     {label: 'Details of the version'}
+    ]
+  }
+]);
+
+Menu.setApplicationMenu(menu);
 
 app.on("ready", createWindow);
 
