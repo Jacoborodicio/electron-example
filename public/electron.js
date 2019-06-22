@@ -9,11 +9,6 @@ const isDev = require("electron-is-dev");
 
 let mainWindow;
 
-// require("update-electron-app")({
-//   repo: "kitze/react-electron-example",
-//   updateInterval: "1 hour"
-// });
-
 function createWindow() {
   mainWindow = new BrowserWindow(
     { 
@@ -29,33 +24,34 @@ function createWindow() {
       : `file://${path.join(__dirname, "../build/index.html")}`
   );
   mainWindow.on("closed", () => (mainWindow = null));
+  let menu = Menu.buildFromTemplate([
+    {
+      label: 'Menú',
+      submenu: [
+        {
+          label: 'Create a note'
+        },
+        {label: 'Replace'},
+        {label: 'Find'}
+      ]
+    },
+    {
+      label: 'Info',
+      submenu: [
+        {
+          label: 'See repo on GitHub',
+          click() {
+            Shell.openExternal('https://github.com/Jacoborodicio/electron-example')
+          },
+          accelerator: 'Ctrl+O'
+       },
+       {label: 'Details of the version'}
+      ]
+    }
+  ]);
+  
+  Menu.setApplicationMenu(menu);
 }
-let menu = Menu.buildFromTemplate([
-  {
-    label: 'Menú',
-    submenu: [
-      {
-        label: 'Create a note'
-      },
-      {label: 'Replace'},
-      {label: 'Find'}
-    ]
-  },
-  {
-    label: 'Info',
-    submenu: [
-      {
-        label: 'See repo on GitHub',
-        click() {
-          Shell.openExternal('https://github.com/Jacoborodicio/electron-example')
-        }
-     },
-     {label: 'Details of the version'}
-    ]
-  }
-]);
-
-Menu.setApplicationMenu(menu);
 
 app.on("ready", createWindow);
 
