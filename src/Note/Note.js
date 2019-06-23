@@ -1,12 +1,14 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
+import { Header } from '../components/Header/Header';
 class Note extends React.Component {
     render(){
         return(
-            <React.Fragment>
+            <div className='App'>
+            <Header />
             <h1>Ventana para la creación de una nota</h1>
-            <Link to='/'>Volver</Link>
-            </React.Fragment>
+            <Link className='link' to='/'>Volver</Link>
+            </div>
         );
     }
 }

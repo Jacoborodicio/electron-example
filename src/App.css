@@ -1,4 +1,11 @@
 .App {
+  padding: 10px;
+}
+
+.link {
+  text-decoration: none;
+  color: purple;
+  font-style: italic;
 }
 
 .App-logo {
@@ -7,10 +14,10 @@
 }
 
 .App-header {
-  background-color: #222;
+  /* background-color: #222; */
   height: 70px;
   padding: 10px;
-  color: white;
+  /* color: white; */
 }
 
 .App-intro {
@@ -21,3 +28,7 @@
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+
+/* .main-container {
+  
+} */

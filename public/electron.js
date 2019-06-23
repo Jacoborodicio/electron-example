@@ -3,11 +3,14 @@ const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
 const Menu = electron.Menu;
 const Shell = electron.shell;
+const notification = electron.Notification;
+const ipcMain = electron.ipcMain;
 
 const path = require("path");
 const isDev = require("electron-is-dev");
 
 let mainWindow;
+let popUpWindow;
 
 function createWindow() {
   mainWindow = new BrowserWindow(
@@ -18,39 +21,33 @@ function createWindow() {
         nodeIntegration: true
       }
     });
+    popUpWindow = new BrowserWindow(
+      { 
+        width: 600, 
+        height: 480, 
+        parent: mainWindow,
+        webPreferences: {
+          nodeIntegration: true
+        },
+        show: false
+      });
   mainWindow.loadURL(
     isDev
       ? "http://localhost:3000"
       : `file://${path.join(__dirname, "../build/index.html")}`
   );
+  popUpWindow.loadURL(
+    isDev
+      ? "http://localhost:3000/popUp"
+      : `file://${path.join(__dirname, "../build/index.html")}`
+  );
   mainWindow.on("closed", () => (mainWindow = null));
-  let menu = Menu.buildFromTemplate([
-    {
-      label: 'Menú',
-      submenu: [
-        {
-          label: 'Create a note'
-        },
-        {label: 'Replace'},
-        {label: 'Find'}
-      ]
-    },
-    {
-      label: 'Info',
-      submenu: [
-        {
-          label: 'See repo on GitHub',
-          click() {
-            Shell.openExternal('https://github.com/Jacoborodicio/electron-example')
-          },
-          accelerator: 'Ctrl+O'
-       },
-       {label: 'Details of the version'}
-      ]
-    }
-  ]);
-  
-  Menu.setApplicationMenu(menu);
+  popUpWindow.on('close', (e) => {
+    e.preventDefault();
+    popUpWindow.hide();
+  });
+  let buildMenu = Menu.buildFromTemplate(menu);
+  Menu.setApplicationMenu(buildMenu);
 }
 
 app.on("ready", createWindow);
@@ -66,3 +63,57 @@ app.on("activate", () => {
     createWindow();
   }
 });
+
+let menu = [
+  {
+    label: 'Menú',
+    submenu: [
+      {
+        label: 'Create a note'
+      },
+      {label: 'Replace'},
+      {label: 'Find'}
+    ]
+  },
+  {
+    label: 'Info',
+    submenu: [
+      {
+        label: 'See repo on GitHub',
+        click() {
+          Shell.openExternal('https://github.com/Jacoborodicio/electron-example')
+        },
+        accelerator: 'Ctrl+O'
+     },
+     {label: 'Details of the version'}
+    ]
+  }
+];
+
+if(process.env.NODE_ENV !== 'production') {
+  menu.push({
+    label: 'Open devTools',
+    submenu: [
+      {
+        label: 'Show/Hide devTools',
+        click(item, focusedWindow) {
+          focusedWindow.toggleDevTools();
+        }
+      }
+    ]
+  })
+}
+
+function sendNotification(title, body) {
+  new notification({
+    title,
+    body
+  }).show();
+}
+
+ipcMain.on('toggle-popup', (event, arg) => {
+  popUpWindow.show();
+
+  // Vemos como podemos enviar también datos con ipc
+  popUpWindow.webContents.send('send-text', arg);
+})

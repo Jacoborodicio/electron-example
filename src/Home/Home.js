@@ -1,11 +1,25 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
+import { Header } from '../components/Header/Header';
+import {Button} from '@material-ui/core';
+const electron = window.require('electron');
+const ipcRenderer = electron.ipcRenderer;
 
 export const Home = props => {
+    const showPopUp = () => {
+        const defaultTextToTest = 'Este testo nace en home y se envía con la acción de toggle-popup';
+        ipcRenderer.send('toggle-popup', defaultTextToTest);
+    }
     return (
-        <React.Fragment>
+
+        <div className='App'>
+        <Header />
         <h1>Este es el home de la aplicación</h1>
-        <Link to='/createNote'>Create a note</Link>
-        </React.Fragment>
+        <Link className='link' to='/createNote'>Create a note</Link>
+        {/* <Link className='link' to='/popUp'>Open a popUp</Link> */}
+        <Button
+            onClick={() => showPopUp()}
+        >Show popUp</Button>
+        </div>
     )
 }
