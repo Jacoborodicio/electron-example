@@ -3,9 +3,8 @@ const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
 const Menu = electron.Menu;
 const Shell = electron.shell;
-const notification = electron.Notification;
+const Notification = electron.Notification;
 const ipcMain = electron.ipcMain;
-
 const path = require("path");
 const isDev = require("electron-is-dev");
 
@@ -117,3 +116,32 @@ ipcMain.on('toggle-popup', (event, arg) => {
   // Vemos como podemos enviar también datos con ipc
   popUpWindow.webContents.send('send-text', arg);
 })
+
+ipcMain.on('notification', (event, arg) => {
+  let myNotification = new Notification({
+    title: arg.title,
+    body: arg.body
+}).show();
+
+  if(myNotification)
+  myNotification.onClik = () => {
+    console.log("Notification clicked!")
+  };
+})
+
+// Storage actions
+ipcMain.on('fetch-note-from-storage', () => {
+  mainWindow.send('handle-fetch-note-storage', {
+    success: true,
+    message: 'Note fetched successfully',
+    text: 'Demo'
+  });
+});
+ipcMain.on('save-note-to-storage', (event, arg) => {
+  mainWindow.send('handle-save-note-storage', {
+    success: true,
+    message: 'Note saved successfully',
+    text: arg
+  });
+});
+
