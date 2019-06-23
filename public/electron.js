@@ -7,6 +7,8 @@ const Notification = electron.Notification;
 const ipcMain = electron.ipcMain;
 const path = require("path");
 const isDev = require("electron-is-dev");
+const storage = require('electron-json-storage');
+
 
 let mainWindow;
 let popUpWindow;
@@ -123,25 +125,50 @@ ipcMain.on('notification', (event, arg) => {
     body: arg.body
 }).show();
 
-  if(myNotification)
-  myNotification.onClik = () => {
-    console.log("Notification clicked!")
-  };
+  // if(myNotification)
+  // myNotification.onClik = () => {
+  //   console.log("Notification clicked!")
+  // };
 })
 
 // Storage actions
 ipcMain.on('fetch-note-from-storage', () => {
-  mainWindow.send('handle-fetch-note-storage', {
-    success: true,
-    message: 'Note fetched successfully',
-    text: 'Demo'
-  });
+  storage.get('aplication', function(error, data){
+    if(error) {
+      mainWindow.send('handle-fetch-note-storage', {
+        success: false,
+        message: 'Impossible to fetch note',
+        text: ''
+      });      
+    }
+    let {savedText} = data;
+    if(!savedText)
+      savedText = '';
+  
+    mainWindow.send('handle-fetch-note-storage', {
+      success: true,
+      message: 'Note fetched successfully',
+      text: savedText
+    });
+  })
 });
+
 ipcMain.on('save-note-to-storage', (event, arg) => {
-  mainWindow.send('handle-save-note-storage', {
-    success: true,
-    message: 'Note saved successfully',
-    text: arg
-  });
+
+  storage.set('aplication',{savedText: arg}, function (error) {
+    if(error) {
+      mainWindow.send('handle-fetch-note-storage', {
+        success: false,
+        message: 'Impossible to save note',
+        text: ''
+      });      
+    }
+    
+      mainWindow.send('handle-save-note-storage', {
+        success: true,
+        message: 'Note saved successfully',
+        text: arg
+      });
+  })
 });
 

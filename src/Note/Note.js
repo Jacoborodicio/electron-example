@@ -30,8 +30,8 @@ class Note extends React.Component {
 
     handleSaveNote = (event, data) => {
         console.log('handleSaveNote...')
-        // this.setState({text:''});
-        this.saveNote();
+        this.setState({text:''});
+        this.loadSavedNote();
     }
 
     handleOnChange = event => {
