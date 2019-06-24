@@ -73,7 +73,14 @@ let menu = [
         label: 'Create a note'
       },
       {label: 'Replace'},
-      {label: 'Find'}
+      {type: 'separator'},
+      {
+        label: 'Quit',
+        accelerator: process.platform === 'darwin' ? 'Cmd+Q' : 'Ctrl+Q',
+        click() {
+          app.quit();
+        }
+      }
     ]
   },
   {
@@ -84,7 +91,7 @@ let menu = [
         click() {
           Shell.openExternal('https://github.com/Jacoborodicio/electron-example')
         },
-        accelerator: 'Ctrl+O'
+        accelerator: process.platform === 'darwin' ? 'Cmd+O' : 'Ctrl+O'
      },
      {label: 'Details of the version'}
     ]
@@ -99,7 +106,8 @@ if(process.env.NODE_ENV !== 'production') {
         label: 'Show/Hide devTools',
         click(item, focusedWindow) {
           focusedWindow.toggleDevTools();
-        }
+        },
+        accelerator: process.platform === 'darwin' ? 'Alt+Cmd+I' : 'Ctrl+Shift+I'
       }
     ]
   })

@@ -17,7 +17,7 @@ class PopUp extends React.Component {
         return (
             <div className='popUp'>
             <h4>PopUp</h4>
-            <p>Mensaje recibido mediante ipc:</p>
+            <p>Message received through ipc:</p>
             <p>{this.state.paramsFromElectron}</p>
             </div>
         );
