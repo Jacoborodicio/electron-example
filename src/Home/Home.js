@@ -2,8 +2,12 @@ import React from 'react';
 import {Link} from 'react-router-dom';
 import { Header } from '../components/Header/Header';
 import {Button} from '@material-ui/core';
+import axios from 'axios';
 const electron = window.require('electron');
 const ipcRenderer = electron.ipcRenderer;
+
+
+const forecastsURL = 'https://localhost:8443/claimreport/home/api/forecasts';
 
 export const Home = props => {
     const showPopUp = () => {
@@ -16,7 +20,12 @@ export const Home = props => {
     };
     
     const goToLoginWithPopUp = () =>  {
-        ipcRenderer.send('login');
+        ipcRenderer.send('login-component');
+    }
+    const make401error = () => {
+        axios.get(forecastsURL)
+            .then(response => console.log('response: ', response))
+            .catch(err => console.log('err: ', err));
     }
 
     return (
@@ -40,6 +49,11 @@ export const Home = props => {
         <Button
             onClick={() => goToLoginWithPopUp()}
         >Go to demo login</Button>
+        </div>
+        <div className='item'>
+        <Button
+            onClick={() => make401error()}
+        >Try incertecptors for 401</Button>
         </div>
         </div>
     )

@@ -10,8 +10,10 @@ const isDev = require("electron-is-dev");
 const storage = require('electron-json-storage');
 
 
+
 let mainWindow;
 let popUpWindow;
+let loginWindow;
 
 function createWindow() {
   mainWindow = new BrowserWindow(
@@ -19,7 +21,9 @@ function createWindow() {
       width: 900, 
       height: 680, 
       webPreferences: {
-        nodeIntegration: true
+        nodeIntegration: true,
+        webSecurity: false,
+        allowRunningInsecureContent: true
       }
     });
     popUpWindow = new BrowserWindow(
@@ -28,7 +32,9 @@ function createWindow() {
         height: 480, 
         parent: mainWindow,
         webPreferences: {
-          nodeIntegration: true
+          nodeIntegration: true,
+          webSecurity: false,
+          allowRunningInsecureContent: true
         },
         show: false
       });
@@ -38,7 +44,9 @@ function createWindow() {
         height: 380,
         parent: mainWindow,
         webPreferences: {
-          nodeIntegration: true
+          nodeIntegration: true,
+          webSecurity: false,
+          allowRunningInsecureContent: true
         },
         show: false
       });
@@ -60,10 +68,12 @@ function createWindow() {
       : `file://${path.join(__dirname, "../build/index.html")}`
   );
   mainWindow.on("closed", () => (mainWindow = null));
+
   popUpWindow.on('close', (e) => {
     e.preventDefault();
     popUpWindow.hide();
   });
+
   loginWindow.on('close', (e) => {
     e.preventDefault();
     loginWindow.hide();
@@ -105,6 +115,17 @@ let menu = [
       }
     ]
   },
+  {
+    label: "Edit",
+    submenu: [
+        { label: "Undo", accelerator: "CmdOrCtrl+Z", selector: "undo:" },
+        { label: "Redo", accelerator: "Shift+CmdOrCtrl+Z", selector: "redo:" },
+        { type: "separator" },
+        { label: "Cut", accelerator: "CmdOrCtrl+X", selector: "cut:" },
+        { label: "Copy", accelerator: "CmdOrCtrl+C", selector: "copy:" },
+        { label: "Paste", accelerator: "CmdOrCtrl+V", selector: "paste:" },
+        { label: "Select All", accelerator: "CmdOrCtrl+A", selector: "selectAll:" }
+    ]},
   {
     label: 'Info',
     submenu: [
@@ -148,6 +169,7 @@ ipcMain.on('toggle-popup', (event, arg) => {
   // Vemos como podemos enviar también datos con ipc
   popUpWindow.webContents.send('send-text', arg);
 })
+
 
 ipcMain.on('notification', (event, arg) => {
   let myNotification = new Notification({
@@ -202,4 +224,26 @@ ipcMain.on('save-note-to-storage', (event, arg) => {
   })
 });
 
-ipcMain.on('login', () => loginWindow.show());
+ipcMain.on('login-component', () => loginWindow.show());
+
+// Not in production
+app.on('certificate-error', (event, webContents, url, error, certificate, callback) => {
+  console.log('entramos en el certi-err')
+  if (url === 'https://localhost:8443/claimreport/home/api/forecasts') {
+    // Lógica de verificación.
+    event.preventDefault();
+    callback(true)
+  } else {
+    callback(false)
+  }
+})
+
+app.on('login', (event, webContents, request, authInfo, callback) => {
+  console.log('http auth!');
+  event.preventDefault();
+  loginWindow.show();
+  ipcMain.on('getLogin', (event, credentials) => {  
+    callback(credentials.username, credentials.password);
+  });
+  // loginWindow.hide();
+});
