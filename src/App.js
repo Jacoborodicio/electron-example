@@ -7,7 +7,7 @@ import {
 import Note from './Note/Note';
 import { Home } from './Home/Home';
 import PopUp from './components/PopUp/PopUp';
-
+import Login from './components/Login/Login';
 
 class App extends Component {
   render() {
@@ -17,6 +17,7 @@ class App extends Component {
       <Router>
         <Route path={"/createNote"} component={Note} />
         <Route path={"/popUp"} component={PopUp} />
+        <Route path={"/login"} component={Login} />
         <Route exact path={"/"} component={Home} />
       </Router>
       </div>

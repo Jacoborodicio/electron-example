@@ -7,7 +7,7 @@ const ipcRenderer = electron.ipcRenderer;
 
 export const Home = props => {
     const showPopUp = () => {
-        const defaultTextToTest = 'Este testo nace en home y se envía con la acción de toggle-popup';
+        const defaultTextToTest = 'This text is born in home and is sent with the action of toggle-popup';
         ipcRenderer.send('toggle-popup', defaultTextToTest);
     }
 
@@ -15,22 +15,32 @@ export const Home = props => {
         ipcRenderer.send('notification', {title: 'Demo Notification', body: 'Sended from home.js'})
     };
     
+    const goToLoginWithPopUp = () =>  {
+        ipcRenderer.send('login');
+    }
 
     return (
 
         <div className='App'>
         <Header />
-        <h1>Este es el home de la aplicación</h1>
+        <h3>Available demo actions:</h3>
         <Link className='link' to='/createNote'>Create a note</Link>
         {/* <Link className='link' to='/popUp'>Open a popUp</Link> */}
-        
+        <div className='item'>
         <Button
             onClick={() => showPopUp()}
         >Show popUp</Button>
-
+        </div>
+        <div className='item'>
         <Button
             onClick={() => showNotification()}
         >Show notification</Button>
+        </div>
+        <div className='item'>
+        <Button
+            onClick={() => goToLoginWithPopUp()}
+        >Go to demo login</Button>
+        </div>
         </div>
     )
 }

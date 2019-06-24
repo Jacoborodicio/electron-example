@@ -59,13 +59,14 @@ class Note extends React.Component {
                 </Button>
                 <p>{this.state.restoredText}</p>
             </div>
+            <hr/>
             <div>
                 <input type='text' name='text' value={this.state.text} onChange={this.handleOnChange}/>
                 <Button onClick={() => this.saveNote()}>
                     Save note
                 </Button>
             </div>
-            <Link className='link' to='/'>Volver</Link>
+            <Link className='link' to='/'>Go back to home</Link>
             </div>
         );
     }

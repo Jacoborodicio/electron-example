@@ -32,14 +32,31 @@ function createWindow() {
         },
         show: false
       });
+    loginWindow = new BrowserWindow(
+      {
+        width: 400,
+        height: 380,
+        parent: mainWindow,
+        webPreferences: {
+          nodeIntegration: true
+        },
+        show: false
+      });
+
   mainWindow.loadURL(
     isDev
       ? "http://localhost:3000"
       : `file://${path.join(__dirname, "../build/index.html")}`
   );
+  /** In different windows right now we're not taking care of build moment, we should also mapping that */
   popUpWindow.loadURL(
     isDev
       ? "http://localhost:3000/popUp"
+      : `file://${path.join(__dirname, "../build/index.html")}`
+  );
+  loginWindow.loadURL(
+    isDev
+      ? "http://localhost:3000/login"
       : `file://${path.join(__dirname, "../build/index.html")}`
   );
   mainWindow.on("closed", () => (mainWindow = null));
@@ -47,6 +64,11 @@ function createWindow() {
     e.preventDefault();
     popUpWindow.hide();
   });
+  loginWindow.on('close', (e) => {
+    e.preventDefault();
+    loginWindow.hide();
+  });
+  
   let buildMenu = Menu.buildFromTemplate(menu);
   Menu.setApplicationMenu(buildMenu);
 }
@@ -180,3 +202,4 @@ ipcMain.on('save-note-to-storage', (event, arg) => {
   })
 });
 
+ipcMain.on('login', () => loginWindow.show());
