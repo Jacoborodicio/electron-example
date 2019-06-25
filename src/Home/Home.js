@@ -4,6 +4,7 @@ import { Header } from '../components/Header/Header';
 import {Button} from '@material-ui/core';
 import axios from 'axios';
 const electron = window.require('electron');
+const {BrowserWindow} = electron.remote;
 const ipcRenderer = electron.ipcRenderer;
 
 
@@ -21,6 +22,21 @@ export const Home = props => {
     
     const goToLoginWithPopUp = () =>  {
         ipcRenderer.send('login-component');
+    }
+    const rendererProcesses = () => {
+        let secondWin = new BrowserWindow({
+            width: 500,
+            height: 400,
+            // frame: false, // Remove controls => self manage concepts (NICE looking)
+            titlebarAppearsTransparent: 'YES',
+            // titleBarStyle: 'hidden', // It will be deprecated I think
+            webPreferences: {
+                nodeIntegration: true
+              }
+        });
+        secondWin.loadURL('http://localhost:3000/login');
+        secondWin.on('close', () => secondWin.close());
+        secondWin.on('closed', () => secondWin = null);
     }
     const make401error = () => {
         axios.get(forecastsURL)
@@ -54,6 +70,11 @@ export const Home = props => {
         <Button
             onClick={() => make401error()}
         >Try incertecptors for 401</Button>
+        </div>
+        <div className='item'>
+        <Button
+            onClick={() => rendererProcesses()}
+        >Renderer processes</Button>
         </div>
         </div>
     )

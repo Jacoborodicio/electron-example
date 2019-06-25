@@ -20,49 +20,10 @@ class Login extends React.Component {
 
     handleLogin = () => {
         ipcRenderer.send('getLogin', {username: this.state.username, password: this.state.password});
-
-        // const encodedString = new Buffer(
-        //     this.state.userName + ':' + this.state.password
-        //   ).toString('base64');
-        //   const authorizationData = 'Basic ' + encodedString;
-        //   console.log('Encoded Authorization Data : ', authorizationData);
-        // console.log('Sending... ', this.state)
-        // axios
-        // .get(forecastsURL, {
-        //     withCredentials: true,
-        //     headers: {
-        //     'Content-Type': 'application/json',
-        //     Authorization: authorizationData
-        //     },
-        //     credentials: 'cross-origin'
-        // })
-        // .then(res => {
-        //     console.log('response with login: ',res);
-        //     console.log('Headers : ', res.headers);
-        // })
-        // .catch(error => {
-        //     console.log('error ' + error);
-        // });
-
-
-
+        console.log('si se ejecuta el código después')
     }
     tryAccess  = () => {
-        // axios
-        // .get(forecastsURL, {
-        //     withCredentials: true,
-        //     headers: {
-        //     'Content-Type': 'application/json',
-        //     Authorization: ''
-        //     },
-        //     credentials: 'cross-origin'
-        // })
-        // .then(res => {
-        //     console.log('res: ', res);
-        // })
-        // .catch(error => {
-        //     console.log('error ' + error);
-        // });
+        ipcRenderer.send('close-login');
     }
     handleOnChange = e => {
         this.setState({
@@ -79,7 +40,7 @@ class Login extends React.Component {
                 <hr/>
                 <Button onClick={this.handleLogin}>Login</Button>
                 <hr/>
-                <Button onClick={this.tryAccess}>Try access</Button>
+                <Button onClick={this.tryAccess}>Close Window</Button>
             </div>
         )
     }

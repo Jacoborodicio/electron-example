@@ -42,7 +42,7 @@ function createWindow() {
       {
         width: 400,
         height: 380,
-        parent: mainWindow,
+        // parent: mainWindow,
         webPreferences: {
           nodeIntegration: true,
           webSecurity: false,
@@ -187,7 +187,7 @@ ipcMain.on('notification', (event, arg) => {
 ipcMain.on('fetch-note-from-storage', () => {
   storage.get('aplication', function(error, data){
     if(error) {
-      mainWindow.send('handle-fetch-note-storage', {
+      mainWindow.webContents.send('handle-fetch-note-storage', {
         success: false,
         message: 'Impossible to fetch note',
         text: ''
@@ -197,7 +197,7 @@ ipcMain.on('fetch-note-from-storage', () => {
     if(!savedText)
       savedText = '';
   
-    mainWindow.send('handle-fetch-note-storage', {
+    mainWindow.webContents.send('handle-fetch-note-storage', {
       success: true,
       message: 'Note fetched successfully',
       text: savedText
@@ -209,14 +209,14 @@ ipcMain.on('save-note-to-storage', (event, arg) => {
 
   storage.set('aplication',{savedText: arg}, function (error) {
     if(error) {
-      mainWindow.send('handle-fetch-note-storage', {
+      mainWindow.webContents.send('handle-fetch-note-storage', {
         success: false,
         message: 'Impossible to save note',
         text: ''
       });      
     }
     
-      mainWindow.send('handle-save-note-storage', {
+      mainWindow.webContents.send('handle-save-note-storage', {
         success: true,
         message: 'Note saved successfully',
         text: arg
@@ -224,7 +224,16 @@ ipcMain.on('save-note-to-storage', (event, arg) => {
   })
 });
 
-ipcMain.on('login-component', () => loginWindow.show());
+ipcMain.on('login-component', () => {
+  console.log('llamada a login-component que en realidad es cerrar....')
+  loginWindow.show()}
+  );
+
+
+ipcMain.on('close-login', () => {
+  console.log('Event of closing received in electron.js');
+  loginWindow.close();
+});
 
 // Not in production
 app.on('certificate-error', (event, webContents, url, error, certificate, callback) => {
@@ -239,11 +248,10 @@ app.on('certificate-error', (event, webContents, url, error, certificate, callba
 })
 
 app.on('login', (event, webContents, request, authInfo, callback) => {
-  console.log('http auth!');
   event.preventDefault();
   loginWindow.show();
   ipcMain.on('getLogin', (event, credentials) => {  
     callback(credentials.username, credentials.password);
+    loginWindow.hide();  
   });
-  // loginWindow.hide();
 });
